@@ -74,21 +74,18 @@ function preload() {
 }
 
 function setup() {
-	createCanvas(windowWidth-30,windowHeight-20);
+	createCanvas(windowWidth-30,windowHeight-40);
 	colors=[color(255),color(255,255,0),color(255,0,0)];
 	rectMode(CENTER);
 	imageMode(CENTER);
 	again=createButton("Start Game");
-	again.position(width/2-30,height/2+20);
+	again.position(width/2,height/2+30);
 	again.mousePressed(initializeVars);
-	//let instr="Don't hit the asteroids - you'll lose health!\n<br></br>\nLast as long as you can and \n<br></br>collect yellow coins to increase score.\n\n<br></br>Collect hearts to increase health.\n\n<br></br>Press 'P' to pause and 'Q' to quit.";
-	//p=createElement("H3",instr);
-	//p.position(width/2-300,height/4-90);
+	// let instr="Don't hit the asteroids - you'll lose health!\n<br></br>\nLast as long as you can and \n<br></br>collect yellow coins to increase score.\n\n<br></br>Collect hearts to increase health.\n\n<br></br>Press 'P' to pause and 'Q' to quit.";
 }
 
 function initializeVars() {
 	infoScreen=false;
-	p.hide();
 	noCursor();
 	again.hide();
 	score=0;
@@ -176,17 +173,18 @@ function draw() {
 		text("Score: "+score,20,50);
 		pop();
 	} else {
-		background(1,1,20);
 		push();
 		fill(255);
-		rect(width/2+15,height/4,700,400);
+		rect(width/2+20,.3*height,500,300);
 		fill(0);
 		textSize(40);
-		text("Instructions",width/2-95,height/4-150);
-		textSize(30);
-		let instr="Don't hit the asteroids - you'll lose health!\n\nLast as long as you can and \ncollect yellow coins to increase score.\n\nCollect hearts to increase health.\n\nPress 'P' to pause and 'Q' to quit.";
-		text(instr,width/2-300,height/4-90);
-		p.show();
+		text("Instructions",width/2-75,height/4-80);
+		textSize(25);
+		text("Don't hit the asteroids - you'll lose health!",width/2-200,height/4-40);
+		text("Last as long as you can and",width/2-140,height/4+10);
+		text("collect yellow coins to increase score.",width/2-190,height/4+40);
+		text("Collect hearts to increase health.",width/2-170,height/4+100);
+		text("Press 'P' to pause and 'Q' to quit.",width/2-170,height/4+150);
 		pop();
 	}
 }
@@ -232,7 +230,7 @@ function keyPressed() {
 		cursor();
 		noLoop();
 		cont=createButton("Continue")
-		cont.position(width/2-30,height/2+20);
+		cont.position(width/2,height/2+30);
 		cont.mousePressed(function(){
 			cont.hide();
 			noCursor();
