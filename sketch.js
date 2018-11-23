@@ -1,10 +1,10 @@
-/*NOTES:
-	1)format words-center the instruction text
-*/
+//in event of window resize, canvas.size(windowWidth,windowHeight)
 
 let colors;
 let score;
 let lost;
+let quit;
+let pause;
 let addHealthLoop;
 let addCoinLoop;
 let addAstLoop;
@@ -17,9 +17,8 @@ let shipImage;
 let heartImage;
 let player;
 let again;
-let cont;
 let infoScreen=true;
-let p;
+let canvas;
 
 Asteroid=function(x,y,r,level,worth) {
 	this.value=worth;
@@ -74,22 +73,25 @@ function preload() {
 }
 
 function setup() {
-	createCanvas(windowWidth-30,windowHeight-40);
+	canvas=createCanvas(windowWidth,windowHeight);
+	canvas.position((windowWidth-width)/2,(windowHeight-height)/2);
 	colors=[color(255),color(255,255,0),color(255,0,0)];
 	rectMode(CENTER);
 	imageMode(CENTER);
 	again=createButton("Start Game");
-	again.position(width/2,height/2+30);
+	again.position(0.5*windowWidth-66,0.65*windowHeight);
+	again.size(136,30);
 	again.mousePressed(initializeVars);
-	// let instr="Don't hit the asteroids - you'll lose health!\n<br></br>\nLast as long as you can and \n<br></br>collect yellow coins to increase score.\n\n<br></br>Collect hearts to increase health.\n\n<br></br>Press 'P' to pause and 'Q' to quit.";
 }
 
 function initializeVars() {
 	infoScreen=false;
+	pause=false;
 	noCursor();
 	again.hide();
 	score=0;
 	lost=false;
+	quit=false;
 	currSpeed=1.5;
 	direction=0;
 	for(let i=0; i<floor(random(4,10)); i++) {
@@ -106,10 +108,10 @@ function initializeVars() {
 		health:10,
 		w:30,
 		l:25,
-		x:width/2-10,
-		y:height-25,
+		x:0.5*width,
+		y:0.97*height,
 		display:function(){
-			image(shipImage,this.x,this.y,40,40);
+			image(shipImage,this.x,this.y,0.0215*width,0.0438*height);
 		},
 		move:function(num) {
 			if((num>0&&this.x<width-this.w/2)||(num<0&&this.x>this.w/2)) {
@@ -134,7 +136,7 @@ function addHealth() {
 
 
 function draw() {
-	if(!infoScreen) {
+	if(!infoScreen&&!pause) {
 		background(0);
 		for(let i=0; i<asteroids.length; i++) {
 			asteroids[i].update();
@@ -148,6 +150,7 @@ function draw() {
 				asteroids.splice(i,1);
 				if(player.health==0) {
 					loseGame();
+					lost=true;
 				}
 			}
 		}
@@ -159,39 +162,54 @@ function draw() {
 		if(currSpeed>=2.7) {
 			clearInterval(incrSpeed);
 		}
-		if(lost) {
-			push();
-			fill(255);
-			textSize(20);
-			text("You Lost!",width/2-20,height/2);
-			pop();
-		}
 		push();
 		fill(255);
-		textSize(20);
-		text("Health: "+player.health,20,20);
-		text("Score: "+score,20,50);
+		textSize(0.0107*width);
+		text("Health: "+player.health,0.0107*width,0.0219*height);
+		text("Score: "+score,0.0107*width,0.0547*height);
 		pop();
-	} else {
+	} else if(infoScreen){
 		push();
 		fill(255);
-		rect(width/2+20,.3*height,500,300);
+		rect(0.5*width,0.34*height,0.31*width,0.33*height);
+		textSize(0.0295*width);
+		text("Asteroid Dodge",0.4*width,0.09*height);
 		fill(0);
-		textSize(40);
-		text("Instructions",width/2-75,height/4-80);
-		textSize(25);
-		text("Don't hit the asteroids - you'll lose health!",width/2-200,height/4-40);
-		text("Last as long as you can and",width/2-140,height/4+10);
-		text("collect yellow coins to increase score.",width/2-190,height/4+40);
-		text("Collect hearts to increase health.",width/2-170,height/4+100);
-		text("Press 'P' to pause and 'Q' to quit.",width/2-170,height/4+150);
+		textSize(0.0215*width);
+		text("Instructions",0.44*width,0.23*height);
+		textSize(0.0134*width);
+		text("Don't hit the asteroids - you'll lose health!",0.36*width,0.275*height);
+		text("Last as long as you can and",0.4*width,0.32*height);
+		text("collect yellow coins to increase score.",0.365*width,0.353*height);
+		text("Collect hearts to increase health.",0.385*width,0.4*height);
+		text("Press 'P' to pause and 'Q' to quit.",0.386*width,0.45*height);
+		pop();
+	}
+	if(lost) {
+		push();
+		fill(255);
+		textSize(0.02*width);
+		text("You Lost!",0.46*width,0.5*height);
+		pop();
+	}
+	if(quit) {
+		push();
+		fill(255);
+		textSize(0.02*width);
+		text("You Quit!",0.46*width,0.5*height);
+		pop();
+	}
+	if(pause) {
+		push();
+		fill(255);
+		textSize(0.02*width);
+		text("Paused",0.47*width,0.5*height);
 		pop();
 	}
 }
 
 function loseGame() {
 	asteroids=[];
-	lost=true;
 	cursor();
 	clearTimeout(addAstLoop);
 	clearTimeout(addHealthLoop);
@@ -200,8 +218,6 @@ function loseGame() {
 	clearInterval(incrScore);
 	push();
 	fill(255);
-	textSize(20);
-	text("You Lost!",width/2-20,height/2);
 	again.html("Play Again?");
 	again.show();
 	pop();
@@ -215,32 +231,27 @@ function keyPressed() {
 		direction=-1;
 	}
 	if(key=="Q") {
+		quit=true;
+		pause=false;
 		loseGame();
-		if(cont) {
-			cont.hide();
-			loop();
-		}
 	}
 	if(key=="P") {
-		clearTimeout(addAstLoop);
-		clearTimeout(addHealthLoop);
-		clearTimeout(addCoinLoop);
-		clearInterval(incrSpeed);
-		clearInterval(incrScore);
-		cursor();
-		noLoop();
-		cont=createButton("Continue")
-		cont.position(width/2,height/2+30);
-		cont.mousePressed(function(){
-			cont.hide();
+		pause=!pause;
+		if(pause) {
+			clearTimeout(addAstLoop);
+			clearTimeout(addHealthLoop);
+			clearTimeout(addCoinLoop);
+			clearInterval(incrSpeed);
+			clearInterval(incrScore);
+			cursor();
+		} else {
 			noCursor();
 			incrSpeed=setInterval(function(){currSpeed+=.01;},2000);
 			incrScore=setInterval(function(){score++;},2000)
 			addHealth();
 			addCoin();
 			addAst();
-			loop();
-		});
+		}
 	}
 }
 
