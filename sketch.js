@@ -1,4 +1,5 @@
 //in event of window resize, canvas.size(windowWidth,windowHeight)
+//move forward and back
 
 let colors;
 let score;
@@ -15,6 +16,8 @@ let direction;
 let asteroids=[];
 let shipImage;
 let heartImage;
+let astImage;
+let coinImage;
 let player;
 let again;
 let infoScreen=true;
@@ -40,10 +43,15 @@ Asteroid=function(x,y,r,level,worth) {
 			push();
 			image(heartImage,this.x,this.y,this.r*2,this.r*2);
 			pop();
+		} else if(this.value==-1){
+			push();
+			translate(this.x,this.y-this.r);
+			rotate(270-atan(this.xSpeed/this.ySpeed));
+			image(astImage,0,0,this.r*5,this.r*5);
+			pop();
 		} else {
 			push();
-			fill(colors[this.value+1]);
-			ellipse(this.x,this.y,this.r*2,this.r*2);
+			image(coinImage,this.x,this.y,this.r*2,this.r*2);
 			pop();
 		}
 	}
@@ -61,15 +69,17 @@ Asteroid=function(x,y,r,level,worth) {
 		return false;
 	}
 	this.hitsPlayer=function(num){
-		let dX=this.x-max(player.x,min(this.x,player.x+player.w));
-		let dY=this.y-max(player.y,min(this.y,player.y+player.l));
-		return sqrt(pow(dX,2)+pow(dY,2))<this.r;
+		let dX=this.x-player.x;
+		let dY=this.y-player.y;
+		return sqrt(pow(dX,2)+pow(dY,2))<this.r+player.r;
 	}
 }
 
 function preload() {
-	shipImage=loadImage("assets/Spaceship.png");
-	heartImage=loadImage("assets/Heart.png");
+	shipImage=loadImage("assets/spaceship.png");
+	heartImage=loadImage("assets/heart.png");
+	astImage=loadImage("assets/asteroid.png");
+	coinImage=loadImage("assets/coin.png");
 }
 
 function setup() {
@@ -78,6 +88,7 @@ function setup() {
 	colors=[color(255),color(255,255,0),color(255,0,0)];
 	rectMode(CENTER);
 	imageMode(CENTER);
+	angleMode(DEGREES);
 	again=createButton("Start Game");
 	again.position(0.5*windowWidth-66,0.65*windowHeight);
 	again.size(136,30);
@@ -95,7 +106,7 @@ function initializeVars() {
 	currSpeed=1.5;
 	direction=0;
 	for(let i=0; i<floor(random(4,10)); i++) {
-		asteroids.push(new Asteroid(random(width),0,random(5,10),1,-1));
+		asteroids.push(new Asteroid(random(width),0,random(10,20),1,-1));
 	}
 	setTimeout(function(){
 		addAst();
@@ -106,12 +117,13 @@ function initializeVars() {
 	addCoin();
 	player={
 		health:10,
-		w:30,
-		l:25,
+		r:15,
+		w:40,
+		l:60,
 		x:0.5*width,
-		y:0.97*height,
+		y:0.95*height,
 		display:function(){
-			image(shipImage,this.x,this.y,0.0215*width,0.0438*height);
+			image(shipImage,this.x,this.y,this.w,this.l);
 		},
 		move:function(num) {
 			if((num>0&&this.x<width-this.w/2)||(num<0&&this.x>this.w/2)) {
@@ -122,11 +134,11 @@ function initializeVars() {
 }
 
 function addAst() {
-	asteroids.push(new Asteroid(random(width),0,random(5,10),currSpeed,-1));
-	addAstLoop=setTimeout(addAst,70/currSpeed+20);
+	asteroids.push(new Asteroid(random(width),0,random(10,20),currSpeed,-1));
+	addAstLoop=setTimeout(addAst,80/currSpeed+20);
 }
 function addCoin() {
-	asteroids.push(new Asteroid(random(width),0,10,currSpeed/4,0));
+	asteroids.push(new Asteroid(random(width),0,17,currSpeed/4,0));
 	addCoinLoop=setTimeout(addCoin,random(3000,4000)/currSpeed);
 }
 function addHealth() {
@@ -137,7 +149,7 @@ function addHealth() {
 
 function draw() {
 	if(!infoScreen&&!pause) {
-		background(0);
+		background(1,1,20);
 		for(let i=0; i<asteroids.length; i++) {
 			asteroids[i].update();
 			asteroids[i].display();
@@ -171,7 +183,7 @@ function draw() {
 	} else if(infoScreen){
 		push();
 		fill(255);
-		rect(0.5*width,0.34*height,0.31*width,0.33*height);
+		rect(0.49*width,0.34*height,0.29*width,0.33*height);
 		textSize(0.0295*width);
 		text("Asteroid Dodge",0.4*width,0.09*height);
 		fill(0);
@@ -180,7 +192,7 @@ function draw() {
 		textSize(0.0134*width);
 		text("Don't hit the asteroids - you'll lose health!",0.36*width,0.275*height);
 		text("Last as long as you can and",0.4*width,0.32*height);
-		text("collect yellow coins to increase score.",0.365*width,0.353*height);
+		text("collect golden coins to increase score.",0.365*width,0.353*height);
 		text("Collect hearts to increase health.",0.385*width,0.4*height);
 		text("Press 'P' to pause and 'Q' to quit.",0.386*width,0.45*height);
 		pop();
