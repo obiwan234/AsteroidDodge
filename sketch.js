@@ -77,9 +77,8 @@ Asteroid=function(x,y,r,level,worth) {
 }
 
 function preload() {
-	console.log("new");
 	shipImage=loadImage("assets/spaceship.png");
-	heartImage=loadImage("assets/heart.png");
+	heartImage=loadImage("assets/heart.PNG");
 	astImage=loadImage("assets/asteroid.png");
 	coinImage=loadImage("assets/coin.png");
 }
