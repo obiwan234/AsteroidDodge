@@ -22,6 +22,7 @@ let player;
 let again;
 let infoScreen=true;
 let canvas;
+let speedIncr=0.18;
 
 Asteroid=function(x,y,r,level,worth) {
 	this.value=worth;
@@ -77,7 +78,7 @@ Asteroid=function(x,y,r,level,worth) {
 
 function preload() {
 	shipImage=loadImage("assets/spaceship.png");
-	heartImage=loadImage("assets/heart.PNG");
+	heartImage=loadImage("assets/heart.png");
 	astImage=loadImage("assets/asteroid.png");
 	coinImage=loadImage("assets/coin.png");
 }
@@ -103,7 +104,7 @@ function initializeVars() {
 	score=0;
 	lost=false;
 	quit=false;
-	currSpeed=1.5;
+	currSpeed=2;
 	direction=0;
 	for(let i=0; i<floor(random(4,10)); i++) {
 		asteroids.push(new Asteroid(random(width),0,random(10,20),1,-1));
@@ -111,12 +112,12 @@ function initializeVars() {
 	setTimeout(function(){
 		addAst();
 	},70);
-	incrSpeed=setInterval(function(){currSpeed+=.01;},2000);
+	incrSpeed=setInterval(function(){currSpeed+=speedIncr;},2000);
 	incrScore=setInterval(function(){score++;},2000)
 	addHealth();
 	addCoin();
 	player={
-		health:10,
+		health:5,
 		r:15,
 		w:40,
 		l:60,
@@ -139,11 +140,11 @@ function addAst() {
 }
 function addCoin() {
 	asteroids.push(new Asteroid(random(width),0,17,currSpeed/4,0));
-	addCoinLoop=setTimeout(addCoin,random(3000,4000)/currSpeed);
+	addCoinLoop=setTimeout(addCoin,random(6000,8000)/currSpeed);
 }
 function addHealth() {
 	asteroids.push(new Asteroid(random(width),0,25,currSpeed/6,1));
-	addHealthLoop=setTimeout(addHealth,15000/currSpeed);
+	addHealthLoop=setTimeout(addHealth,22500/currSpeed);
 }
 
 
@@ -258,7 +259,7 @@ function keyPressed() {
 			cursor();
 		} else {
 			noCursor();
-			incrSpeed=setInterval(function(){currSpeed+=.01;},2000);
+			incrSpeed=setInterval(function(){currSpeed+=speedIncr;},2000);
 			incrScore=setInterval(function(){score++;},2000)
 			addHealth();
 			addCoin();
