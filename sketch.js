@@ -77,10 +77,10 @@ Asteroid=function(x,y,r,level,worth) {
 }
 
 function preload() {
-	shipImage=loadImage("assets/spaceship.png");
-	heartImage=loadImage("assets/heart.png");
-	astImage=loadImage("assets/asteroid.png");
-	coinImage=loadImage("assets/coin.png");
+	shipImage=loadImage("../assets/spaceship.png");
+	heartImage=loadImage("../assets/heart.png");
+	astImage=loadImage("../assets/asteroid.png");
+	coinImage=loadImage("../assets/coin.png");
 }
 
 function setup() {
