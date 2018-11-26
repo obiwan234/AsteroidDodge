@@ -184,7 +184,7 @@ function draw() {
 	} else if(infoScreen){
 		push();
 		fill(255);
-		rect(0.49*width,0.34*height,0.29*width,0.33*height);
+		rect(0.49*width,0.365*height,0.29*width,0.38*height);
 		textSize(0.0295*width);
 		text("Asteroid Dodge",0.4*width,0.09*height);
 		fill(0);
@@ -196,6 +196,7 @@ function draw() {
 		text("collect golden coins to increase score.",0.365*width,0.353*height);
 		text("Collect hearts to increase health.",0.385*width,0.4*height);
 		text("Press 'P' to pause and 'Q' to quit.",0.386*width,0.45*height);
+		text("Use side arrows to move spaceship.",0.38*width,0.5*height);
 		pop();
 	}
 	if(lost) {
